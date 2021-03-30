@@ -1,3 +1,5 @@
+import numpy as np
+
 class Person:
 
     # Initialization function, sets all parameters at once.
@@ -66,8 +68,92 @@ class Person:
         self.incubation = incubation
 
     # calculate severity risk based on demographic factors, as of now calculation is undefined.
+    # calculate severity risk based on demographic factors, as of now calculation is undefined.
     def calcSeverityRisk(self, age, sex, comorbidities):
-        return -1
+        int
+        numComorbidities = len(comorbidities)
+        # file needs to be created and tested
+        # 0,0,40
+        # 10,5,35
+        # 20,15,35
+        # 30,25,30
+        # 40,35,30
+        # 50,45,25
+        # 60,50,25
+        # 70,55,20
+        # 80,60,20
+        # 90,60,20
+        # sex not currently accounted for
+        with open("diseasedata/severity_risk.dat", "r") as sevRisk:
+            distrWithComorbidities = {}
+            distrWithoutComorbidities = {}
+            for lines in sevRisk:
+                brackets = lines.split(",")
+                distrWithComorbidities[int(brackets[0])] = float(brackets[2])
+                distrWithoutComorbidities[int(brackets[0])] = float(brackets[1])
+            ageCategory = (age / 10) * 10
+            if numComorbidities == 0:
+                srScore = distrWithoutComorbidities[ageCategory]
+            else:
+                srScore = distrWithComorbidities[ageCategory] * pow(0.75, numComorbidities)
+        return srScore
+
+    def calcMortality(self):
+        # patient is hospitalized if they are recognized as severe/critical
+        if self.infectionState == 2 or self.infectionState == 3:
+            #we might need to change this number for probICU
+            probICU = 0.1
+            probVent = 0.76
+            probDeathWithVent = 0.339
+            probDeathWoutVent = 0.286
+            n = np.random.randint(0, 1)
+            if  n < probICU:
+                #patient is in ICU
+                m = np.random.randint(0, 1)
+                #patient is using ventilator
+                if m < probVent:
+                    s = np.random.randint(0, 1)
+                    if s < probDeathWithVent:
+                        return True
+                #not using ventilator
+                else:
+                    s = np.random.randint(0, 1)
+                    if s < probDeathWoutVent:
+                        return True
+
+
+
+
+
+    def calcInfectionState(self, srScore):
+        infectionStateByScore = {
+            0: [0.7, 0.1, 0.05, 0.05],
+            10: [0.6, 0.2, 0.1, 0.1],
+            20: [0.5, 0.3, 0.1, 0.1],
+            30: [0.4, 0.3, 0.2, 0.1],
+            40: [0.3, 0.2, 0.2, 0.1],
+            50: [0.3, 0.2, 0.2, 0.1],
+            60: [0.2, 0.2, 0.3, 0.3],
+            70: [0.1, 0.2, 0.4, 0.3],
+            80: [0.05, 0.05, 0.3, 0.6],
+            90: [0.05, 0.05, 0.2, 0.7]
+        }
+        severityScoreCategory = (srScore / 10) * 10
+        n = np.random.randint(0, 1)
+        threshold = (infectionStateByScore[srScore])[0]
+        if n < threshold:
+            return 0  # 0 = asymptomatic
+        threshold += (infectionStateByScore[srScore])[1]
+        if n < threshold:
+            return 1  # 1 = mild
+        threshold += (infectionStateByScore[srScore])[2]
+        if n < threshold:
+            return 2  # 2 = severe
+        else:
+            return 3  # 3 = critical
+
+    def setInfectionState(self):
+        self.infectionState = calcInfectionState(self, self.severityRisk)
 
     # getters for all variables
     def getAge(self):
