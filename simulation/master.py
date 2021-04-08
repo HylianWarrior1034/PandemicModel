@@ -145,7 +145,7 @@ class MasterController:
                                                 len(notInfected)- 1))
             # 2: mild, to be calibrated with disease driver
             Pop[nextInfected].setInfectionState(2)  
-            if Pop[nextInfected].mortality == 1:
+            if Pop[nextInfected].getMortality == 1:
                 totalMortalities += 1
 
         # TODO: to pull from actual data of Oklahoma/frontend map.
