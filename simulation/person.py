@@ -53,21 +53,91 @@ class Person:
         self.demographicInfo = demographic
 
     def setSeverityRisk(self):
-        self.severityRisk = self.calcSeverityRisk(
-            self.age, self.sex, self.comorbidities, self.demographicInfo)
+        self.severityRisk = calcSeverityRisk(self)
 
     def setCurrentLocation(self, location):
         self.currentLocation = location
 
+    # if providing a state
     def setInfectionState(self, state):
+        print(type(state))
         self.infectionState = state
+
+    # no state provided, must calc a state
+    def calcInfectionState(self):
+        self.infectionState = calcInfectionState(self)
+
 
     def setIncubation(self, incubation):
         self.incubation = incubation
 
     # calculate severity risk based on demographic factors, as of now calculation is undefined.
-    def calcSeverityRisk(self, age, sex, comorbidities):
-        return -1
+    def calcSeverityRisk(self):
+        numComorbidities = len(self.comorbidities)
+        # sex not currently accounted for
+        sevRisk = open("diseasedata/severity_risk.dat", "r")
+        distrWithComorbidities = {}
+        distrWithoutComorbidities = {}
+        for lines in sevRisk:
+            brackets = lines.split(",")
+            distrWithComorbidities[int(brackets[0])] = float(brackets[2])
+            distrWithoutComorbidities[int(brackets[0])] = float(brackets[1])
+        ageCategory = (self.age / 10) * 10
+        if numComorbidities == 0:
+            srScore = distrWithoutComorbidities[ageCategory]
+        else:
+            srScore = distrWithComorbidities[ageCategory] * pow(0.75, numComorbidities)
+        close(sevRisk)
+        return srScore
+ 
+    def calcInfectionState(self):
+        infectionStateByScore = {
+            0: [0.7, 0.1, 0.05, 0.05],
+            10: [0.6, 0.2, 0.1, 0.1],
+            20: [0.5, 0.3, 0.1, 0.1],
+            30: [0.4, 0.3, 0.2, 0.1],
+            40: [0.3, 0.2, 0.2, 0.1],
+            50: [0.3, 0.2, 0.2, 0.1],
+            60: [0.2, 0.2, 0.3, 0.3],
+            70: [0.1, 0.2, 0.4, 0.3],
+            80: [0.05, 0.05, 0.3, 0.6],
+            90: [0.05, 0.05, 0.2, 0.7]
+        }
+        severityScoreCategory = (self.calcSeverityRisk / 10) * 10
+        n = np.random.randint(0, 1)
+        threshold = (infectionStateByScore[severityScoreCategory])[0]
+        if n < threshold:
+            return 0 # 0 = asymptomatic
+        threshold += (infectionStateByScore[severityScoreCategory])[1]
+        if n < threshold:
+            return 1 # 1 = mild
+        threshold += (infectionStateByScore[severityScoreCategory])[2]
+        if n < threshold:
+            return 2 # 2 = severe
+        else:
+            return 3 # 3 = critical
+
+    def calcMortality(self):
+        # patient is hospitalized if they are recognized as severe/critical
+        if self.infectionState == 2 or self.infectionState == 3:
+            probICU = 0.1  # we might need to change this number for probICU
+            probVent = 0.76
+            probDeathWithVent = 0.339
+            probDeathWoutVent = 0.286
+            n = np.random.randint(0, 1)
+            if  n < probICU:
+                #patient is in ICU
+                m = np.random.randint(0, 1)
+                #patient is using ventilator
+                if m < probVent:
+                    s = np.random.randint(0, 1)
+                    if s < probDeathWithVent:
+                        return True
+                #not using ventilator
+                else:
+                    s = np.random.randint(0, 1)
+                    if s < probDeathWoutVent:
+                        return True
 
     # getters for all variables
     def getAge(self):

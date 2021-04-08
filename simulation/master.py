@@ -78,7 +78,7 @@ class MasterController:
         # infections how should we spread them through the population?
         for i in range(5):
             ran = random.randint(0, len(Pop) - 1)
-            Pop[ran].setInfectionState(True)
+            Pop[ran].InfectionState(True)
         Facilities = M.createSubmodules() # Submodules returned as list of submodule objects.
         interval = 2
         self.runSim(interval, Pop, Facilities, M)
@@ -139,11 +139,14 @@ class MasterController:
         # Assign initial infection state status for each person
         initialInfected = 10  # Should be customizable in  the future
         notInfected = [*range(len(Pop))]
+        totalMortalities = 0
         for i in range(initialInfected):
             nextInfected = notInfected.pop(random.randint(0,
                                                 len(notInfected)- 1))
             # 2: mild, to be calibrated with disease driver
             Pop[nextInfected].setInfectionState(2)  
+            if Pop[nextInfected].mortality == 1:
+                totalMortalities += 1
 
         # TODO: to pull from actual data of Oklahoma/frontend map.
         # Currently assuming a fixed number of each, and using a range of 6
@@ -151,8 +154,7 @@ class MasterController:
 
         # Instantiate submodules with
         # {id: submodule}, int, {hour: set of facilities open}
-        facilities, totalFacilityCapacities, openHours = M.createFacilities(
-            'submodules.json')  
+        facilities, totalFacilityCapacities, openHours = M.createFacilities('simulation/submodules.json')  
 
         # Fill with change in infections as [initial, final] per hour
         # for each facilityID, or "Not Open" if facility is closed
@@ -282,6 +284,7 @@ class MasterController:
         print('Infection In Facilities Hourly: ', infectionInFacilitiesHourly)
         print('Total number infected in facilities hourly is ',
                 totalInfectedInFacilities)
+        print('Total number of deaths: ', totalMortalities)
         #Updated the formatting of the json file
         response = {'Buildings': [
                     {"BuildingName": str(facilities[id].getFacilityType())+ str(id),
