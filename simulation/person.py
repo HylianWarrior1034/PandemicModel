@@ -4,16 +4,16 @@ class Person:
     # TODO: have some default parameters if we can't set all of them at once, for initializing them with synthpops.
     def __init__(self, ID, age=0, sex=0, householdLocation=0,
             householdContacts=[], comorbidities=0, demographicInfo=0,
-            severityRisk=0, currentLocation=0, infectionState=-1, incubation=0):
+            severityRisk=0, currentLocation=0, infectionState=-1, mortality=0, incubation=0):
         self.setAllParameters(ID, age, sex, householdLocation,
                              householdContacts, comorbidities,
                              demographicInfo, severityRisk, currentLocation,
-                             infectionState, incubation)
+                             infectionState, mortality, incubation)
 
     # Sets all parameters.
     def setAllParameters(self, ID, age=0, sex=0, householdLocation=0,
             householdContacts=[], comorbidities=0, demographicInfo=0,
-            severityRisk=0, currentLocation=0, infectionState=0, incubation=0):
+            severityRisk=0, currentLocation=0, infectionState=0, mortality=0, incubation=0):
         self.ID = ID
         self.age = age
         self.sex = sex
@@ -25,6 +25,7 @@ class Person:
         self.currentLocation = currentLocation
         # 0: susceptible, 1: asymptomatic, 2: mild, 3: severe, 4: critical, 5: recovered
         self.infectionState = infectionState
+        self.mortality = mortality
         self.incubation = incubation
         self.disease = []
 
@@ -55,12 +56,14 @@ class Person:
     def setSeverityRisk(self):
         self.severityRisk = calcSeverityRisk(self)
 
+    def setMortality(self):
+        self.mortality = calcMortality(self)
+
     def setCurrentLocation(self, location):
         self.currentLocation = location
 
     # if providing a state
     def setInfectionState(self, state):
-        print(type(state))
         self.infectionState = state
 
     # no state provided, must calc a state
@@ -132,12 +135,13 @@ class Person:
                 if m < probVent:
                     s = np.random.randint(0, 1)
                     if s < probDeathWithVent:
-                        return True
+                        return 1
                 #not using ventilator
                 else:
                     s = np.random.randint(0, 1)
                     if s < probDeathWoutVent:
-                        return True
+                        return 1
+            return 0
 
     # getters for all variables
     def getAge(self):
@@ -166,6 +170,9 @@ class Person:
 
     def getInfectionState(self):
         return self.infectionState
+
+    def getMortality(self):
+        return self.mortality
 
     def getIncubation(self):
         return self.incubation
