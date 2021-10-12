@@ -68,12 +68,15 @@ class MasterController:
     def getUserInputFacility(self):
         facilityInput = input("Enter a facility id or type: ")
         
-        if facilityInput == 'Supermarket' || facilityInput == 'Restaurant' || facilityInput == 'Retail' || facilityInput == 'School' || facilityInput == 'Hospital' || facilityInput == 'Gym' || facilityInput == 'Other':
+        if facilityInput == 'Supermarket' or facilityInput == 'Restaurant' or facilityInput == 'Retail' or facilityInput == 'School' or facilityInput == 'Hospital' or facilityInput == 'Gym' or facilityInput == 'Other':
             for facility in facilities:
                 if facility.getFacilityType() == facilityInput:
                     #Call graph function on facility.getID
+        elif facilityInput in [facility.getID() for facility in facilities]:
+            
         else:
-            #Call graph function on facilityInput
+            print("Invalid input")
+            #Call graph function on facilityInput, which is an ID
             #Assumption: Input is either facility type or valid ID
 
     def createModule(self):
