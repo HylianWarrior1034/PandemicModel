@@ -64,6 +64,13 @@ class MasterController:
         self.county = county
         self.interventions = interventions
 
+    ### new function that gets user input for the facility
+    def getUserInputFacility(self):
+        facilityInput = input("Enter a facility id or type: ")
+        
+        ### later call the function to get the graph for facility id or type
+
+
     def createModule(self):
         '''
         This function will create a module with the given state, county, and interventions
@@ -688,10 +695,13 @@ if __name__ == '__main__':
 
     #mc.sumVisitMatrices()  # Verify correctness of visit matrices
     interventions = {}
+
+    ## calls for user input
+    mc.getUserInputFacility()
     
     #interventions = {"maskWearing":100,"stayAtHome":True,"contactTracing":100,"dailyTesting":100,"roomCapacity": 100, "vaccinatedPercent": 50}
     mc.runFacilityTests('facilities_info.txt')
     
-    mc.Run_OKC(print_infection_breakdown=False, num_days=61, intervention_list=interventions)  # Run entire simulation for 61 days
+    #mc.Run_OKC(print_infection_breakdown=False, num_days=61, intervention_list=interventions)  # Run entire simulation for 61 days
 
     mc.excelToJson('OKC Data.xls', 'OKC Data.json')
