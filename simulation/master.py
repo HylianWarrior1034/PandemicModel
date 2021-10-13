@@ -71,13 +71,13 @@ class MasterController:
         if facilityInput == 'Supermarket' or facilityInput == 'Restaurant' or facilityInput == 'Retail' or facilityInput == 'School' or facilityInput == 'Hospital' or facilityInput == 'Gym' or facilityInput == 'Other':
             for facility in facilities:
                 if facility.getFacilityType() == facilityInput:
-                    #Call graph function on facility.getID
+                    #Call graph function on facility.getID, pass dictionary, global variable: array of number of people
         elif facilityInput in [facility.getID() for facility in facilities]:
-            
+            #Call graph function on facilityInput, which is an ID, pass dictionary, global variable: array of number of people
+            #Assumption: Input is either facility type or valid ID
         else:
             print("Invalid input")
-            #Call graph function on facilityInput, which is an ID
-            #Assumption: Input is either facility type or valid ID
+            
 
     def createModule(self):
         '''
