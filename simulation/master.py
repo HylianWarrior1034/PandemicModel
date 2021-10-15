@@ -11,6 +11,8 @@ from datetime import datetime
 import sciris as sc
 from bisect import bisect_left
 import xlrd
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 poiID = 0
@@ -67,7 +69,9 @@ class MasterController:
     ### new function that gets user input for the facility
     def getUserInputFacility(self):
         facilityInput = input("Enter a facility id or type: ")
+
         
+<<<<<<< HEAD
         if facilityInput == 'Supermarket' or facilityInput == 'Restaurant' or facilityInput == 'Retail' or facilityInput == 'School' or facilityInput == 'Hospital' or facilityInput == 'Gym' or facilityInput == 'Other':
             for facility in facilities:
                 if facility.getFacilityType() == facilityInput:
@@ -78,6 +82,24 @@ class MasterController:
         else:
             print("Invalid input")
             
+=======
+        ### later call the function to get the graph for facility id or type
+
+    ### Function to graph facilities population
+    # Inputs are id of facility to visualize, and facilities dictionary.
+    # create list in simulation and run function there? call listVisualize
+    # listVisualize.append(int(facilities[facilityid].getVisitors))
+    def visualizeFacility(self, facilityid, facilities, listVisualize):
+        days = [number for number in range(61)] # x axis, make 61 be num_days? add another input...
+        y_pos = np.arange(facilities[facilityid].getCapacity()) # y axis
+        plt.bar(y_pos,listVisualize, align='center', alpha=0.5) # initialize bar graph
+        plt.xticks(y_pos,days)
+        plt.ylabel('Visitors')
+        title = "Visitors for facility {name}".format(name = str(facilities[facilityid].getFacilityType()))
+        plt.title(title)
+
+
+>>>>>>> 604ab0f (1st implementation of visualize function)
 
     def createModule(self):
         '''
@@ -349,7 +371,7 @@ class MasterController:
         Main simulation loop
         '''
         # TODO: retention rate within facilities- currently no one stays in a facility longer than one hour, pending ML team
-
+        listVisualize=[] # Create list to store elements to display in visualize function!
         tested = set()
         for h in range(num_days * 24):
 
@@ -450,6 +472,7 @@ class MasterController:
 
                 infectionInFacilities[i].append(
                     [initialInfectionNumber, finalInfectionNumber])
+        listVisualize.append(int(facilities[facilityid].getVisitors)) # Add element to visualize list to see visitors. Edit function to disp facilityid
 
         return (totalInfectedInFacilities,
         facilities, infectionInFacilitiesHourly,
@@ -712,4 +735,5 @@ if __name__ == '__main__':
     
     #mc.Run_OKC(print_infection_breakdown=False, num_days=61, intervention_list=interventions)  # Run entire simulation for 61 days
 
+    mc.excelToJson('OKC Data.xls', 'OKC Data.json')
     mc.excelToJson('OKC Data.xls', 'OKC Data.json')
