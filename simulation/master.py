@@ -69,27 +69,27 @@ class MasterController:
     ### new function that gets user input for the facility
     def getUserInputFacility(self):
         facilityInput = input("Enter a facility id or type: ")
+        visualizeBool = True
 
-        
-<<<<<<< HEAD
+
         if facilityInput == 'Supermarket' or facilityInput == 'Restaurant' or facilityInput == 'Retail' or facilityInput == 'School' or facilityInput == 'Hospital' or facilityInput == 'Gym' or facilityInput == 'Other':
             for facility in facilities:
                 if facility.getFacilityType() == facilityInput:
                     #Call graph function on facility.getID, pass dictionary, global variable: array of number of people
+            facilityid = facility.getID()
         elif facilityInput in [facility.getID() for facility in facilities]:
             #Call graph function on facilityInput, which is an ID, pass dictionary, global variable: array of number of people
             #Assumption: Input is either facility type or valid ID
         else:
             print("Invalid input")
-            
-=======
+
         ### later call the function to get the graph for facility id or type
 
     ### Function to graph facilities population
     # Inputs are id of facility to visualize, and facilities dictionary.
     # create list in simulation and run function there? call listVisualize
     # listVisualize.append(int(facilities[facilityid].getVisitors))
-    def visualizeFacility(self, facilityid, facilities, listVisualize):
+    def visualizeFacility(self, facilityid):
         days = [number for number in range(61)] # x axis, make 61 be num_days? add another input...
         y_pos = np.arange(facilities[facilityid].getCapacity()) # y axis
         plt.bar(y_pos,listVisualize, align='center', alpha=0.5) # initialize bar graph
@@ -97,9 +97,7 @@ class MasterController:
         plt.ylabel('Visitors')
         title = "Visitors for facility {name}".format(name = str(facilities[facilityid].getFacilityType()))
         plt.title(title)
-
-
->>>>>>> 604ab0f (1st implementation of visualize function)
+        plt.show
 
     def createModule(self):
         '''
@@ -372,6 +370,10 @@ class MasterController:
         '''
         # TODO: retention rate within facilities- currently no one stays in a facility longer than one hour, pending ML team
         listVisualize=[] # Create list to store elements to display in visualize function!
+        visualizeBool=False
+        facilityid=0
+        getUserInputFacility()
+
         tested = set()
         for h in range(num_days * 24):
 
@@ -623,6 +625,9 @@ class MasterController:
 
         self.infecFacilitiesTot= totalInfectedInFacilities
         self.infecHousesTot= infectionInHouseholds
+
+        if visualizeBool:
+            self.visualizeFunction(facilityid)
 
         return response
 
