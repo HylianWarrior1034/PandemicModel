@@ -53,6 +53,10 @@ class MasterController:
     #                   Basically use this for print statements in places that won't immediately clog the terminal with thousands of lines of output
     generalDebugMode = True
     #####
+    
+    listVisualize=[] # Create list to store elements to display in visualize function!
+    visualizeBool = False
+    visualizefacilityid = 0;
      
     def getUserInput(self, state, county, interventions):
         '''
@@ -76,10 +80,12 @@ class MasterController:
             for facility in facilities:
                 if facility.getFacilityType() == facilityInput:
                     #Call graph function on facility.getID, pass dictionary, global variable: array of number of people
+                    visualizefacilityid = facility.getID
             facilityid = facility.getID()
         elif facilityInput in [facility.getID() for facility in facilities]:
             #Call graph function on facilityInput, which is an ID, pass dictionary, global variable: array of number of people
             #Assumption: Input is either facility type or valid ID
+            visualizefacilityid = facilityInput
         else:
             print("Invalid input")
 
@@ -89,13 +95,13 @@ class MasterController:
     # Inputs are id of facility to visualize, and facilities dictionary.
     # create list in simulation and run function there? call listVisualize
     # listVisualize.append(int(facilities[facilityid].getVisitors))
-    def visualizeFacility(self, facilityid):
+    def visualizeFacility(self):
         days = [number for number in range(61)] # x axis, make 61 be num_days? add another input...
-        y_pos = np.arange(facilities[facilityid].getCapacity()) # y axis
+        y_pos = np.arange(facilities[visualizefacilityid].getCapacity()) # y axis
         plt.bar(y_pos,listVisualize, align='center', alpha=0.5) # initialize bar graph
         plt.xticks(y_pos,days)
         plt.ylabel('Visitors')
-        title = "Visitors for facility {name}".format(name = str(facilities[facilityid].getFacilityType()))
+        title = "Visitors for facility {name}".format(name = str(facilities[visualizefacilityid].getFacilityType()))
         plt.title(title)
         plt.show
 
@@ -369,9 +375,6 @@ class MasterController:
         Main simulation loop
         '''
         # TODO: retention rate within facilities- currently no one stays in a facility longer than one hour, pending ML team
-        listVisualize=[] # Create list to store elements to display in visualize function!
-        visualizeBool=False
-        facilityid=0
         getUserInputFacility()
 
         tested = set()
@@ -474,7 +477,10 @@ class MasterController:
 
                 infectionInFacilities[i].append(
                     [initialInfectionNumber, finalInfectionNumber])
-        listVisualize.append(int(facilities[facilityid].getVisitors)) # Add element to visualize list to see visitors. Edit function to disp facilityid
+            
+            if visualizeBool:
+                listVisualize.append(int(facilities[visualizefacilityid].getVisitors)) # Add element to visualize list to see visitors. Edit function to disp facilityid
+        
 
         return (totalInfectedInFacilities,
         facilities, infectionInFacilitiesHourly,
@@ -627,7 +633,7 @@ class MasterController:
         self.infecHousesTot= infectionInHouseholds
 
         if visualizeBool:
-            self.visualizeFunction(facilityid)
+            self.visualizeFunction(visualizefacilityid)
 
         return response
 
@@ -731,14 +737,11 @@ if __name__ == '__main__':
 
     #mc.sumVisitMatrices()  # Verify correctness of visit matrices
     interventions = {}
-
-    ## calls for user input
-    mc.getUserInputFacility()
     
     #interventions = {"maskWearing":100,"stayAtHome":True,"contactTracing":100,"dailyTesting":100,"roomCapacity": 100, "vaccinatedPercent": 50}
     mc.runFacilityTests('facilities_info.txt')
     
-    #mc.Run_OKC(print_infection_breakdown=False, num_days=61, intervention_list=interventions)  # Run entire simulation for 61 days
+    mc.Run_OKC(print_infection_breakdown=False, num_days=61, intervention_list=interventions)  # Run entire simulation for 61 days
 
     mc.excelToJson('OKC Data.xls', 'OKC Data.json')
     mc.excelToJson('OKC Data.xls', 'OKC Data.json')
