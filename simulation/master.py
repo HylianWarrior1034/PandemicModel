@@ -71,20 +71,16 @@ class MasterController:
         self.interventions = interventions
 
     ### new function that gets user input for the facility
-    def getUserInputFacility(self):
+    def getUserInputFacility(self, facilities):
         facilityInput = input("Enter a facility id or type: ")
         visualizeBool = True
 
 
         if facilityInput == 'Supermarket' or facilityInput == 'Restaurant' or facilityInput == 'Retail' or facilityInput == 'School' or facilityInput == 'Hospital' or facilityInput == 'Gym' or facilityInput == 'Other':
-            for facility in facilities:
-                if facility.getFacilityType() == facilityInput:
-                    #Call graph function on facility.getID, pass dictionary, global variable: array of number of people
-                    visualizefacilityid = facility.getID
-            facilityid = facility.getID()
-        elif facilityInput in [facility.getID() for facility in facilities]:
-            #Call graph function on facilityInput, which is an ID, pass dictionary, global variable: array of number of people
-            #Assumption: Input is either facility type or valid ID
+            for id in range(len(facilities.keys())):
+                if facilities[id].getFacilityType() == facilityInput:
+                    visualizefacilityid = id
+        elif facilityInput == [id for id in facilities]:
             visualizefacilityid = facilityInput
         else:
             print("Invalid input")
@@ -95,7 +91,7 @@ class MasterController:
     # Inputs are id of facility to visualize, and facilities dictionary.
     # create list in simulation and run function there? call listVisualize
     # listVisualize.append(int(facilities[facilityid].getVisitors))
-    def visualizeFacility(self):
+    def visualizeFacility(self, facilities):
         days = [number for number in range(61)] # x axis, make 61 be num_days? add another input...
         y_pos = np.arange(facilities[visualizefacilityid].getCapacity()) # y axis
         plt.bar(y_pos,listVisualize, align='center', alpha=0.5) # initialize bar graph
@@ -375,7 +371,7 @@ class MasterController:
         Main simulation loop
         '''
         # TODO: retention rate within facilities- currently no one stays in a facility longer than one hour, pending ML team
-        getUserInputFacility()
+        self.getUserInputFacility(facilities)
 
         tested = set()
         for h in range(num_days * 24):
@@ -478,8 +474,8 @@ class MasterController:
                 infectionInFacilities[i].append(
                     [initialInfectionNumber, finalInfectionNumber])
             
-            if visualizeBool:
-                listVisualize.append(int(facilities[visualizefacilityid].getVisitors)) # Add element to visualize list to see visitors. Edit function to disp facilityid
+            if self.visualizeBool:
+                self.listVisualize.append(int(facilities[self.visualizefacilityid].getVisitors)) # Add element to visualize list to see visitors. Edit function to disp facilityid
         
 
         return (totalInfectedInFacilities,
@@ -632,8 +628,8 @@ class MasterController:
         self.infecFacilitiesTot= totalInfectedInFacilities
         self.infecHousesTot= infectionInHouseholds
 
-        if visualizeBool:
-            self.visualizeFunction(visualizefacilityid)
+        if self.visualizeBool:
+            self.visualizeFunction(facilities)
 
         return response
 
@@ -741,7 +737,8 @@ if __name__ == '__main__':
     #interventions = {"maskWearing":100,"stayAtHome":True,"contactTracing":100,"dailyTesting":100,"roomCapacity": 100, "vaccinatedPercent": 50}
     mc.runFacilityTests('facilities_info.txt')
     
-    mc.Run_OKC(print_infection_breakdown=False, num_days=61, intervention_list=interventions)  # Run entire simulation for 61 days
+    mc.Anytown(print_infection_breakdown=False, num_days=61, intervention_list=interventions)
+    #mc.Run_OKC(print_infection_breakdown=False, num_days=61, intervention_list=interventions)  # Run entire simulation for 61 days
 
     mc.excelToJson('OKC Data.xls', 'OKC Data.json')
     mc.excelToJson('OKC Data.xls', 'OKC Data.json')
