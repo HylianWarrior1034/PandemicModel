@@ -371,7 +371,6 @@ class MasterController:
         Main simulation loop
         '''
         # TODO: retention rate within facilities- currently no one stays in a facility longer than one hour, pending ML team
-        self.getUserInputFacility(facilities)
 
         tested = set()
         for h in range(num_days * 24):
@@ -473,9 +472,7 @@ class MasterController:
 
                 infectionInFacilities[i].append(
                     [initialInfectionNumber, finalInfectionNumber])
-            
-            if self.visualizeBool:
-                self.listVisualize.append(int(facilities[self.visualizefacilityid].getVisitors)) # Add element to visualize list to see visitors. Edit function to disp facilityid
+
         
 
         return (totalInfectedInFacilities,
@@ -628,8 +625,6 @@ class MasterController:
         self.infecFacilitiesTot= totalInfectedInFacilities
         self.infecHousesTot= infectionInHouseholds
 
-        if self.visualizeBool:
-            self.visualizeFunction(facilities)
 
         return response
 
