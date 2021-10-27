@@ -7,6 +7,7 @@ import json
 import pickle
 import pandas as pd
 import math
+import csv
 from datetime import datetime
 import sciris as sc
 from bisect import bisect_left
@@ -53,10 +54,6 @@ class MasterController:
     #                   Basically use this for print statements in places that won't immediately clog the terminal with thousands of lines of output
     generalDebugMode = True
     #####
-    
-    listVisualize=[] # Create list to store elements to display in visualize function!
-    visualizeBool = False
-    visualizefacilityid = 0;
      
     def getUserInput(self, state, county, interventions):
         '''
@@ -70,36 +67,37 @@ class MasterController:
         self.county = county
         self.interventions = interventions
 
-    ### new function that gets user input for the facility
-    def getUserInputFacility(self, facilities):
-        facilityInput = input("Enter a facility id or type: ")
-        visualizeBool = True
-
-
-        if facilityInput == 'Supermarket' or facilityInput == 'Restaurant' or facilityInput == 'Retail' or facilityInput == 'School' or facilityInput == 'Hospital' or facilityInput == 'Gym' or facilityInput == 'Other':
-            for id in range(len(facilities.keys())):
-                if facilities[id].getFacilityType() == facilityInput:
-                    visualizefacilityid = id
-        elif facilityInput == [id for id in facilities]:
-            visualizefacilityid = facilityInput
-        else:
-            print("Invalid input")
+    ### new function that gets user input for the facility- gets POI from CSV
+    def getUserInputFacility():
+        visualisePOIs = []
+        facilityInput = input("Enter a facility type: ")
+        file = open('core_poi_OKCity.csv')
+        type(file)
+        csvreader = csv.reader(file)
+        header = []
+        header = next(csvreader)
+        for row in reader:
+            if facilityInput == row[6]:
+                visualisePOI.append(row[1]) #safegraph place ID from csv
+        return visualisePOIs
 
         ### later call the function to get the graph for facility id or type
 
     ### Function to graph facilities population
-    # Inputs are id of facility to visualize, and facilities dictionary.
-    # create list in simulation and run function there? call listVisualize
-    # listVisualize.append(int(facilities[facilityid].getVisitors))
     def visualizeFacility(self, facilities):
-        days = [number for number in range(61)] # x axis, make 61 be num_days? add another input...
-        y_pos = np.arange(facilities[visualizefacilityid].getCapacity()) # y axis
-        plt.bar(y_pos,listVisualize, align='center', alpha=0.5) # initialize bar graph
-        plt.xticks(y_pos,days)
-        plt.ylabel('Visitors')
-        title = "Visitors for facility {name}".format(name = str(facilities[visualizefacilityid].getFacilityType()))
+        visualisePOIs = []
+        visualisePOIs = getUserInputFacility()
+        ##FIGURE OUT MATRICES- given POIs of facilities, get covid cases from matrices for each day and add into array
+        
+        covid_cases = [] #should have 7 elements- each element is sum of all cases on that day (M,T,W,Th,F etc)
+        fig = plt.figure()
+        days = ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"] # x axis, make 61 be num_days? add another input...
+        plt.bar(days, covid_cases, align='center', alpha=0.5) # initialize bar graph
+        plt.ylabel('Covid Cases')
+        title = "Average Covid Cases per day of the week"
         plt.title(title)
-        plt.show
+        plt.show()
+        fig.savefig('visualise_AnytownData.png')
 
     def createModule(self):
         '''
