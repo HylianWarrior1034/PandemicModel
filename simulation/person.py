@@ -21,6 +21,33 @@ class Person:
                          severityRisk=0, currentLocation=0, infectionState=-1, incubation=0, infectionTimer=-1, infectionTrack=None,
                          householdContacts=None, extendedhousehold=None, vaccinated=False, COVID_type="", vaccineName="",
                          shotNumber=0, daysAfterShot=0, essentialWorker=False, madeVaccAppt=False, vaccApptDate=0):
+        """
+
+        @param ID: Unique identifier for a person object
+        @param age: age
+        @param sex: biological sex of person
+        @param householdLocation: Not sure, guess would be what household a person is attached to
+        @param householdMembers: Tracks how many other people are in a household with a person, unsure of type
+        @param comorbidities:
+        @param demographicInfo:
+        @param severityRisk:
+        @param currentLocation:
+        @param infectionState:
+        @param incubation:
+        @param infectionTimer:
+        @param infectionTrack:
+        @param householdContacts:
+        @param extendedhousehold:
+        @param vaccinated:
+        @param COVID_type:
+        @param vaccineName:
+        @param shotNumber:
+        @param daysAfterShot:
+        @param essentialWorker:
+        @param madeVaccAppt:
+        @param vaccApptDate:
+        @return:
+        """
 
         if extendedhousehold is None:
             self.extendedhousehold = set()
@@ -74,6 +101,11 @@ class Person:
     """
 
     def setSynthPopParameters(self, synthPopsPersonDict): #maybe need changes here
+        """
+        Sets householdcontacts, schoolcontacts, and workplacecontacts of a person.
+        @param synthPopsPersonDict: A dictionary of people and those related to them?
+        @return: N/A
+        """
 
         for k, v in synthPopsPersonDict.items():
             setattr(self, k, v)
@@ -155,6 +187,10 @@ class Person:
     # calculate severity risk based on demographic factors, as of now calculation is undefined.
 
     def calcSeverityRisk(self):
+        """
+        Calculates how at risk a person is
+        @return: integer value representing risk
+        """
         # numComorbidities = len(self.comorbidities) if list
         numComorbidities = self.comorbidities
         # sex not currently accounted for
@@ -177,6 +213,10 @@ class Person:
         return srScore
 
     def calcInfectionState(self):
+        """
+        Determines how severely infected a person is
+        @return: 0, 1, 2, or 3 from asymptomatic to severe
+        """
 
         if self.vaccinated:
             return 1
@@ -229,6 +269,10 @@ class Person:
     #Assign number of days spent at peak state based on severity risk
     #TODO update according to info support research
     def assignNumDaysPeakState(self):
+        """
+        Assigns the number of days spent at peak state based on severity risk
+        @return: peakStateDays, either 4, 6, 8, or 10 depending on severity risk.
+        """
 
         peakStateDays =0
         #peakStateDays ranging from 4-10 days, based on severityRisk
@@ -246,6 +290,11 @@ class Person:
         return peakStateDays
 
     def assignTrajectory(self):
+        """
+        Not sure what this does, guessing it generates the number of days the person needs to wait
+        before they recover? based on severity risk, peak state days, and incubation.
+        @return: Nothing, it just adds days to self.infectiontrack
+        """
         peakstate = self.calcInfectionState()
         self.severityRisk = self.calcSeverityRisk()
         incubation = self.incubationAssignment()
