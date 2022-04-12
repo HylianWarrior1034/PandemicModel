@@ -25,6 +25,10 @@ class Population():
         self.debugMode = True
 
     def get_dict(self):
+        """
+        Fills self.peopleArray with persons from the person.py module.
+        @return: peopleArray, an array of person objects.
+        """
         sp.validate()
         datadir = sp.datadir
         location = 'barnsdall'
@@ -56,6 +60,11 @@ class Population():
 
     # calls synthpops and generates population (dictionary)
     def generatePopulation(self, populationSize):
+        """
+        Also sets self.peopleArray from person objects, except using generate_synthetic_population instead of a dictionary.
+        @param populationSize: How many people we want in the population
+        @return: peopleArray, an array of person objects
+        """
         # call function from person class
         peopleArray = {}
         population = sp.generate_synthetic_population(populationSize)
@@ -70,12 +79,20 @@ class Population():
         return peopleArray
 
     def addComorbidities(self):
+        """
+        Sets random comorbidities for people in the peopleArray array.
+        @return: Empty dictionary?
+        """
         comorbiditiesArray = {}
         for i in range(len(self.peopleArray)):
             self.peopleArray[i].setComorbidities(random.randint(0, 5))
         return comorbiditiesArray
 
     def addDem(self):
+        """
+        Sets random demographic information for people in peopleArray.
+        @return: empty dictionary?
+        """
         demographicsArray = {}
         for i in range(len(self.peopleArray)):
             self.peopleArray[i].setDemographicInfo(random.randint(0, 5))
@@ -88,6 +105,10 @@ class Population():
 
     # assigns a person cancer based on the percentages for their risk
     def addCancer(self):
+        """
+        Randomly assigns cancer attributes to people in peopleArray based on the distribution from diseasedata/cancer.dat.
+        @return: None
+        """
         cancerDistr = open("diseasedata/cancer.dat", "r")
 
         distr = {}
@@ -107,6 +128,10 @@ class Population():
 
     # assigns a person diabetes based on the percentage for their risk
     def addDiabetes(self):
+        """
+        Randomly assigns diabetes attributes to people in peopleArray based on a set distribution.
+        @return: None
+        """
         diabetesDistr = open("diseasedata/diabetes.dat", "r")
 
         distr = {}
@@ -128,6 +153,10 @@ class Population():
     # assigns a person kidney disease based on the percentage for their risk
 
     def addKidneyDisease(self):
+        """
+        Randomly assigns kidney disease attributes to people in peopleArray based on a set distribution.
+        @return: None
+        """
         kidneyDistr = open("diseasedata/kidney_disease.dat", "r")
 
         distr = {}
@@ -149,6 +178,10 @@ class Population():
     # assigns a person COPD based on the percentage for their risk
 
     def addCOPD(self):
+        """
+        Randomly assigns COPD attributes to people in peopleArray based on a set distribution.
+        @return: None
+        """
         copdDistr = open("diseasedata/COPD.dat", "r")
 
         distr = {}
@@ -170,6 +203,10 @@ class Population():
     # assigns a person obesity based on the percentage for their risk
 
     def addObesity(self):
+        """
+        Randomly assigns obesity to people in peopleArray based on a preset parameter.
+        @return: None
+        """
         for p in self.peopleArray.values():
             if p.age >= 18:
                 n = random.random()
@@ -178,6 +215,10 @@ class Population():
 
     # assigns a person cystic fibrosis on the percentage for their risk
     def addCysticFibrosis(self):
+        """
+        Randomly assigns cystic fibrosis to people in peopleArray based on a preset parameter.
+        @return: None
+        """
         for p in self.peopleArray.values():
             if p.age <= 44:
                 n = random.random()
@@ -186,6 +227,10 @@ class Population():
 
     # assigns a person hypertension based on the percentage for their risk
     def addHypertension(self):
+        """
+        Randomly assigns hypertension to people in peopleArray based on a set distribution.
+        @return: None
+        """
         hypertensionDistr = open("diseasedata/hypertension.dat", "r")
 
         distr = {}
@@ -207,6 +252,10 @@ class Population():
     # assigns a person smoking based on the percentage for their risk
 
     def addSmoking(self):
+        """
+        Randomly assigns smoker trait to people in peopleArray based on a set distribution.
+        @return: None
+        """
         smokingDistr = open("diseasedata/smoking.dat", "r")
 
         distr = {}
@@ -228,6 +277,10 @@ class Population():
     # assigns a person asthma based on the percentage for their risk
 
     def addAsthma(self):
+        """
+        Randomly assigns asthma to people in peopleArray based on a set distribution.
+        @return: None
+        """
         asthmaDistr = open("diseasedata/asthma.dat", "r")
 
         distr = {}
@@ -249,6 +302,10 @@ class Population():
     # assigns a person liver disease based on the percentage for their risk
 
     def addLiverDisease(self):
+        """
+        Randomly assigns liver disease to people in peopleArray based on a set distribution.
+        @return: None
+        """
         liverDistr = open("diseasedata/liver_disease.dat", "r")
 
         distr = {}
@@ -282,6 +339,11 @@ class Population():
         self.addHypertension()
 
     def generateVacinationPopulation(self):
+        """
+        Generates a dictionary that tracks whether a person is vaccinated based on a boolean. Dictionary is
+        generated based on people's age, essential work status, and comorbidities.
+        @return: vaccinated, a dictionary that contains a person as a key and their boolean vaccination status as a value.
+        """
         peopleArray = self.generatePopulation(self.populationSize)
         vaccinated = {} # create a dictionary of people and their vaccination status
         for i in range(len(peopleArray)):
@@ -294,6 +356,10 @@ class Population():
         return vaccinated
 
     def infectedPop(self):
+        """
+        Returns an array of people who became infected after being fully vaccinated.
+        @return: an array of people who were infected after getting vaccinated.
+        """
         vaccinated = self.generateVacinationPopulation()
         infectedArray = {}
         for i in vaccinated:
